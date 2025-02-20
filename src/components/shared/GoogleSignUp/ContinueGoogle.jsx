@@ -27,7 +27,7 @@ const ContinueGoogle = () => {
           const { data } = await axiosPublic.post(`/users`, userInfo);
           if (data.insertedId) {
             Swal.fire({
-              position: "top-end",
+              position: "center",
               icon: "success",
               title: "Login successfully!",
               showConfirmButton: false,
