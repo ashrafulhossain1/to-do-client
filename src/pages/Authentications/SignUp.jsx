@@ -6,8 +6,10 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 import { Link, useLocation, useNavigate } from "react-router";
 import ContinueGoogle from "./../../components/shared/GoogleSignUp/ContinueGoogle";
+import useAxiosPublic from "../../hooks/AxiosPublic/useAxiosPublic";
 
 const SignUp = () => {
+  const axiosPublic = useAxiosPublic()
   const [err, setErr] = useState("");
 
   const {
@@ -29,15 +31,22 @@ const SignUp = () => {
       const result = await createUser(email, password);
       await updateUserProfile(name, "");
       if (result?.user) {
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          title: "Sign Up successfully!",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        reset();
-        navigate(targetPath);
+        const userInfo = {
+          name: result?.user?.displayName,
+          email: result?.user?.email,
+        };
+        const { data } = await axiosPublic.post(`/users`, userInfo);
+        if (data.insertedId) {
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Sign Up successfully!",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          reset();
+          navigate(targetPath);
+        }
       }
     } catch (error) {
       setErr(error.message);

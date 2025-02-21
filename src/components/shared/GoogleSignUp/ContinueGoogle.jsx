@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from "react-router";
 const ContinueGoogle = () => {
   const { googleLogin } = useAuth();
   const location = useLocation();
-  const targetPath = location?.state ? `${location.state}` : "/home";
+  const targetPath = location?.state ? `${location.state}` : "/";
 
   const navigate = useNavigate();
 
@@ -20,7 +20,6 @@ const ContinueGoogle = () => {
         const userInfo = {
           name: user?.displayName,
           email: user?.email,
-          photo: user?.photoURL,
         };
 
         if (user?.email) {

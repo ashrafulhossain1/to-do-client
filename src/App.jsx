@@ -5,13 +5,19 @@ import Home from "./pages/Home/Home";
 import SignUp from './pages/Authentications/SignUp';
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 import { Toaster } from 'react-hot-toast';
+import ProtectLogged from "./ProtectedRoute/ProtectLogged";
 
 function App() {
   return (
     <BrowserRouter>
+      <Toaster></Toaster>
       <Routes>
-        <Route index path="/signIn" element={<Login />} />
-        <Route index path="/signup" element={<SignUp />} />
+        <Route element={<ProtectLogged></ProtectLogged>}>
+          <Route index path="/signIn" element={<Login />} />
+        </Route>
+        <Route element={<ProtectLogged></ProtectLogged>} >
+          <Route index path="/signup" element={<SignUp />} />
+        </Route>
         <Route element={<ProtectedRoute></ProtectedRoute>}>
           <Route path="/" element={<Home />} />
         </Route>

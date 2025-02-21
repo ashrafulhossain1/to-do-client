@@ -24,10 +24,10 @@ const Navbar = () => {
       {/* Toast Container */}
       <Toaster position="top-right" reverseOrder={false} />
 
-      <nav className="bg-gradient-to-r from-blue-700 to-purple-600 text-white p-4 flex justify-between items-center shadow-md">
+      <nav className="container mx-auto text-white p-4 flex justify-between items-center shadow-md">
         {/* Left Side - Logo */}
         <Link to='/'>
-          <div className="text-xl font-bold flex justify-center items-center">
+          <div className="text-xl gap-2 font-bold flex justify-center items-center">
             <img className="h-12 w-12" src={logo} alt="To-Do Logo" />
             <span>To-Do</span>
           </div>
@@ -35,7 +35,7 @@ const Navbar = () => {
 
         {/* Right Side - User Info, Logout Button, and To-Do Icon */}
         <div className="flex items-center space-x-4">
-          {user && <span className="hidden md:inline-block">Welcome, {user.displayName}</span>}
+          {user && <p className="hidden  md:inline-block">Welcome, <span className="font-medium">{user.displayName}</span></p>}
           <FaTasks className="text-2xl cursor-pointer" />
           <button
             onClick={handleLogout}
