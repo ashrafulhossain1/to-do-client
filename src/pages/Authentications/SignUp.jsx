@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import { Link, useLocation, useNavigate } from "react-router";
 import ContinueGoogle from "./../../components/shared/GoogleSignUp/ContinueGoogle";
 import useAxiosPublic from "../../hooks/AxiosPublic/useAxiosPublic";
+import toast from "react-hot-toast";
 
 const SignUp = () => {
   const axiosPublic = useAxiosPublic()
@@ -37,13 +38,7 @@ const SignUp = () => {
         };
         const { data } = await axiosPublic.post(`/users`, userInfo);
         if (data.insertedId) {
-          Swal.fire({
-            position: "top-end",
-            icon: "success",
-            title: "Sign Up successfully!",
-            showConfirmButton: false,
-            timer: 1500,
-          });
+          toast.success("Account created successfully");
           reset();
           navigate(targetPath);
         }

@@ -14,7 +14,7 @@ const useToDos = () => {
             return response.data;
         },
     })
-    console.log(todos)
+    // console.log(todos)
     return { todos, isLoading, refetch }
 };
 

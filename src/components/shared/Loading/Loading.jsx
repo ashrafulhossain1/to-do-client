@@ -1,24 +1,39 @@
+import { motion } from "framer-motion";
+const Loading = () => {
+  return (
+    <motion.div
+      className="relative w-16 h-16 flex justify-center items-center"
+      animate={{ rotate: 360 }}
+      transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+    >
+      {/* Outer Glowing Ring */}
+      <motion.div
+        className="absolute w-16 h-16 border-4 border-transparent border-t-blue-500 rounded-full"
+        animate={{ rotate: 360 }}
+        transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+      />
 
-import PropTypes from 'prop-types'
+      {/* Middle Ring with Gradient */}
+      <motion.div
+        className="absolute w-12 h-12 border-4 border-transparent border-t-cyan-400 rounded-full"
+        animate={{ rotate: -360 }}
+        transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+      />
 
-const Loading = ({ message = "Loading..." }) => {
-    return (
-      <div className="flex flex-col justify-center items-center h-screen bg-gray-100">
-        {/* Animated Spinner */}
-        <div className="relative w-16 h-16">
-          <div className="absolute border-4 border-t-transparent border-blue-500 rounded-full w-16 h-16 animate-spin"></div>
-          <div className="absolute border-4 border-t-transparent border-green-500 rounded-full w-12 h-12 animate-spin-slow"></div>
-        </div>
-        {/* Loading Message */}
-        <h1 className="mt-6 text-2xl font-semibold text-gray-800">{message || "Loading..."}</h1>
-      </div>
-    );
-  };
-  
-  Loading.propTypes = {
-    message: PropTypes.string.isRequired
-  }
+      {/* Inner Pulsating Dot */}
+      <motion.div
+        className="w-4 h-4 bg-blue-500 rounded-full shadow-lg"
+        animate={{
+          scale: [1, 1.5, 1],
+          opacity: [1, 0.5, 1]
+        }}
+        transition={{
+          duration: 1.2,
+          repeat: Infinity
+        }}
+      />
+    </motion.div>
+  );
+};
 
-  export default Loading;
-  
-
+export default Loading;

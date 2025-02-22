@@ -5,6 +5,7 @@ import { Modal, Input, Select, Button, message } from 'antd';
 import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
 import { confirmAlert } from 'react-confirm-alert'; // For confirmation dialogs
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Styles for confirmation modal
+import Loading from '../shared/Loading/Loading';
 
 const Category = () => {
     const { todos, isLoading, refetch } = useToDos();
@@ -65,9 +66,7 @@ const Category = () => {
 
     // Function to handle submitting updated task
     const handleSubmit = async () => {
-
-
-        console.log(form._id)
+        // console.log(form._id)
         try {
             const taskId = form._id; // Get the task ID from the form state
             const updatedData = {
@@ -107,6 +106,10 @@ const Category = () => {
     const handleCategoryChange = (value) => {
         setForm((prevForm) => ({ ...prevForm, category: value }));
     };
+
+    if (isLoading) {
+        return <Loading></Loading>
+    }
 
     return (
         <div className="flex flex-col md:flex-row gap-4 lg:gap-6 p-4 md:p-6 md:min-h-[700px]">

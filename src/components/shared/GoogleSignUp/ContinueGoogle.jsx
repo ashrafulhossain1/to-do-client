@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import useAuth from "../../../hooks/GetAuthInfo/useAuth";
 import useAxiosPublic from "../../../hooks/AxiosPublic/useAxiosPublic";
 import { useLocation, useNavigate } from "react-router";
+import toast from "react-hot-toast";
 
 const ContinueGoogle = () => {
   const { googleLogin } = useAuth();
@@ -25,19 +26,13 @@ const ContinueGoogle = () => {
         if (user?.email) {
           const { data } = await axiosPublic.post(`/users`, userInfo);
           if (data.insertedId) {
-            Swal.fire({
-              position: "center",
-              icon: "success",
-              title: "Login successfully!",
-              showConfirmButton: false,
-              timer: 1500,
-            });
+            toast.success("Login successfully");
           }
           navigate(targetPath);
         }
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
       });
   };
 

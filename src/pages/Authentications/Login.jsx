@@ -3,9 +3,9 @@ import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/GetAuthInfo/useAuth";
 import { useState } from "react";
-import Swal from "sweetalert2";
 import { Link, useLocation, useNavigate } from "react-router";
 import ContinueGoogle from "./../../components/shared/GoogleSignUp/ContinueGoogle";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [err, setErr] = useState("");
@@ -27,15 +27,8 @@ const Login = () => {
 
     try {
       const result = await loginUser(email, password);
-      console.log(result,';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
       if (result?.user) {
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          title: "Login successfully!",
-          showConfirmButton: false,
-          timer: 1500,
-        });
+        toast.success("Account login successfully");
         reset();
         navigate(targetPath);
       }
