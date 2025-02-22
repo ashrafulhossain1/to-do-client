@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 const Loading = () => {
   return (
     <motion.div
-      className="relative w-16 h-16 flex justify-center items-center"
+      className="relative mx-auto w-16 h-16 flex justify-center items-center"
       animate={{ rotate: 360 }}
       transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
     >
