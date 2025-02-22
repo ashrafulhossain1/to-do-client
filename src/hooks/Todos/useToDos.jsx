@@ -10,7 +10,7 @@ const useToDos = () => {
         queryKey: ['todos', user?.email],
         enabled: !!user?.email,
         queryFn: async () => {
-            const response = await axiosPublic.get(`/todos/${user?.email}`);
+            const response = await axiosPublic.get(`/todos`);
             return response.data;
         },
     })

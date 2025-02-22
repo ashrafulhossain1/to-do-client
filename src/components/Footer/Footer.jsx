@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="container mx-auto flex justify-center items-center space-x-6">
         {/* LinkedIn Icon and Link */}
         <a
-          href="https://www.linkedin.com/in/your-profile"
+          href="https://www.linkedin.com/in/ashrafulhossain1"
           target="_blank"
           rel="noopener noreferrer"
           className="hover:text-blue-400 transition duration-300"
@@ -17,7 +17,7 @@ const Footer = () => {
 
         {/* GitHub Icon and Link */}
         <a
-          href="https://github.com/your-profile"
+          href="https://github.com/ashrafulhossain1"
           target="_blank"
           rel="noopener noreferrer"
           className="hover:text-gray-400 transition duration-300"

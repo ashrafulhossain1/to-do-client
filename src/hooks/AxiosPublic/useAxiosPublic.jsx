@@ -2,8 +2,7 @@ import axios from 'axios'
 
 
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:5000'
-    // baseURL: 'https://edu-pro-sphere.vercel.app'
+    baseURL: 'https://to-do-server-black.vercel.app'
   });
 
   
