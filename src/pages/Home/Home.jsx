@@ -1,12 +1,21 @@
+import Footer from "../../components/Footer/Footer";
+import Category from "../../components/HomeComponents/Category";
+import TaskHeading from "../../components/HomeComponents/TaskHeading";
 import Navbar from "../../components/Navbar/Navbar";
 
 const Home = () => {
     return (
-        <div>
-            <div className="bg-gradient-to-r from-blue-800 to-purple-600">
+        <div className="bg-gray-100">
+            <div className="bg-blue-900 ">
                 <Navbar></Navbar>
             </div>
-            <h1 className="text-red-500 text-5xl">Home</h1>
+            <div>
+                <TaskHeading></TaskHeading>
+            </div>
+            <div>
+                <Category></Category>
+            </div>
+            <Footer></Footer>
         </div>
     );
 };
