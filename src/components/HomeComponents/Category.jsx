@@ -1,226 +1,113 @@
-import { useState, useEffect } from 'react';
+import { useContext } from "react";
+import { AuthContext } from "../../AuthProvider/AuthProvider";
 import useToDos from "../../hooks/Todos/useToDos";
-import useAxiosPublic from "../../hooks/AxiosPublic/useAxiosPublic";
-import { Modal, Input, Select, message } from 'antd';
-import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
-import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
-import Loading from '../shared/Loading/Loading';
-import { DndContext, closestCenter } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
-import SortableItem from './SortableItem';
+import Loading from "../shared/Loading/Loading";
+
+
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
+import Todo from "../../pages/Categoryes/Todo";
+import InProgress from "../../pages/Categoryes/InProgress";
+import Done from "../../pages/Categoryes/Done";
+import axios from "axios";
+
+
+
 
 const Category = () => {
-    const { todos, isLoading, refetch } = useToDos();
-    const axiosPublic = useAxiosPublic();
-    const categories = ["To-Do", "In Progress", "Done"];
-    const [tasks, setTasks] = useState([]);
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const { user } = useContext(AuthContext);
+    const { todos: task, isLoading, refetch } = useToDos()
+    if (isLoading) return <Loading></Loading>;
 
-    // Update tasks when todos change
-    useEffect(() => {
-        setTasks(todos);
-    }, [todos]);
+    const handleDragEnd = async (result) => {
+        if (!result.destination) return;
 
-    // Modal state
-    const [form, setForm] = useState({
-        _id: '',
-        title: '',
-        description: '',
-        category: 'To-Do'
-    });
+        const { source, destination, draggableId } = result;
 
-    // Drag End Handler
-    const handleDragEnd = (event) => {
-        const { active, over } = event;
-        if (!over || active.id === over.id) return;
+        const newCategory = destination.droppableId;
 
-        setTasks((prevTasks) => {
-            const oldIndex = prevTasks.findIndex((t) => t._id === active.id);
-            const newIndex = prevTasks.findIndex((t) => t._id === over.id);
-            return arrayMove(prevTasks, oldIndex, newIndex);
-        });
-    };
-
-    // Delete Task
-    const handleDelete = (id) => {
-        confirmAlert({
-            title: 'Confirm Deletion',
-            message: 'Are you sure you want to delete this task?',
-            buttons: [
-                {
-                    label: 'Yes',
-                    onClick: async () => {
-                        try {
-                            const res = await axiosPublic.delete(`/todos/${id}`);
-                            if (res.data.deletedCount > 0) {
-                                refetch(); // Refetch data after deletion
-                                message.success('Task deleted successfully!');
-                            }
-                        } catch (error) {
-                            console.error('Error deleting task:', error);
-                            message.error('Failed to delete task. Please try again.');
-                        }
-                    },
-                },
-                { label: 'No' },
-            ],
-        });
-    };
-
-    const handleEdit = (task) => {
-        console.log(task);
-
-        setForm({
-            _id: task._id,
-            title: task.title,
-            description: task.description,
-            category: task.category,
-        });
-        setIsModalVisible(true); // Open the modal
-    };
-
-
-
-    //     // Function to handle submitting updated task
-    const handleSubmit = async () => {
-        // console.log(form._id)
         try {
-            const taskId = form._id;
-            const updatedData = {
-                title: form.title,
-                description: form.description,
-                category: form.category,
-            };
-            const response = await axiosPublic.patch(`/todos/${taskId}`, updatedData);
-            if (response.data.modifiedCount > 0) {
-                message.success('Task updated successfully!');
-                refetch(); // Refetch the data to reflect the changes
-            } else {
-                message.warning('No changes were made to the task.');
-            }
+            await axios.put(`https://to-do-server-black.vercel.app/task/update/${draggableId}`, { category: newCategory });
+            refetch(); 
         } catch (error) {
-            console.error('Error updating task:', error);
-            message.error('Failed to update task. Please try again.');
-        } finally {
-            setIsModalVisible(false);
+            console.error("Error updating task category:", error);
         }
     };
 
-
-    // Function to close the modal
-    const handleCancel = () => {
-        setIsModalVisible(false);
-    };
-
-    // Function to handle input changes
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setForm((prevForm) => ({ ...prevForm, [name]: value }));
-    };
-
-    // Function to handle category changes
-    const handleCategoryChange = (value) => {
-        setForm((prevForm) => ({ ...prevForm, category: value }));
-    };
-
-
-    if (isLoading) {
-        return <Loading />;
-    }
-
     return (
-        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <div className="flex flex-col md:flex-row gap-4 p-4">
-                {categories.map((category) => (
-                    <div key={category} className={`flex-1  rounded-lg p-4  
-                    
-                        ${category == 'To-Do' ? "bg-[#c98b9b34]":category == 'In Progress' ? "bg-[#e6b89c24]": 
-                            "bg-[#a2d1f55a]"}}
-
-
-                    `}>
-                        <h3 className={`text-center text-base py-1 md:text-lg font-bold ${category == 'To-Do' ? "bg-[#c98b9b3b]": category == 'In Progress' ? "bg-[#e6b89c24]": 
-                            "bg-[#a2d1f55a]"} mb-2 md:mb-4`} >{category}</h3>
-                        
-                        <SortableContext items={tasks.filter((task) => task.category === category).map((task) => task._id)} strategy={verticalListSortingStrategy}>
-                            {tasks
-                                .filter((task) => task.category === category)
-                                .map((task) => (
-                                    <SortableItem key={task._id} id={task._id}>
-                                        <div className="p-2 border m-2 bg-white rounded-md border-gray-300 flex justify-between items-center">
-                                            <div>
-                                                <h4 className="font-semibold">{task.title}</h4>
-                                                <p className="text-sm text-gray-600">{task.description}</p>
-                                            </div>
-                                            <div className="flex gap-2">
-                                                <AiOutlineEdit
-                                                    onMouseDown={() => handleEdit(task)}
-                                                    className="cursor-pointer text-blue-500 hover:text-blue-700"
-                                                    size={20}
-                                                />
-                                                <AiOutlineDelete
-                                                    onMouseDown={(e) => {
-                                                        e.stopPropagation();
-                                                        handleDelete(task._id);
-                                                    }}
-                                                    className="cursor-pointer text-red-500 hover:text-red-700"
-                                                    size={20}
-                                                />
-                                            </div>
-                                        </div>
-                                    </SortableItem>
-                                ))}
-                        </SortableContext>
-                    </div>
-                ))}
-            </div>
-            <Modal
-                title="Edit Task"
-                open={isModalVisible}
-                onOk={handleSubmit}
-                onCancel={handleCancel}
-                okText="Save Changes"
-                cancelText="Cancel"
-            >
-                <div className="mb-4">
-                    <label className="block mb-2 font-medium">Title (Required, Max 50 Characters)</label>
-                    <Input
-                        placeholder="Enter task title"
-                        name="title"
-                        value={form.title}
-                        onChange={handleInputChange}
-                        maxLength={50}
-                    />
+        <DragDropContext onDragEnd={handleDragEnd}>
+        <div className="grid lg:grid-cols-3 grid-cols-1 gap-6 2xl:mx-36 mx-2 lg:mx-4 xl:mx-20 my-10">
+          {/* TO-DO */}
+          <Droppable droppableId="To-Do">
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                <h1 className="text-center text-xl font-bold sm:text-2xl pb-3.5 text-[#d44a6c]">
+                  TO-DO
+                </h1>
+                <div className="bg-[#c98b9b3b] p-3 rounded-2xl">
+                  {task.filter((task) => task.category === "To-Do").map((filteredTask, index) => (
+                    <Draggable key={filteredTask._id} draggableId={filteredTask._id} index={index}>
+                      {(provided) => (
+                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                          <Todo filteredTask={filteredTask} refetch={refetch} />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
                 </div>
-                <div className="mb-4">
-                    <label className="block mb-2 font-medium">Description (Max 200 Characters)</label>
-                    <Input.TextArea
-                        placeholder="Enter task description"
-                        name="description"
-                        value={form.description}
-                        onChange={handleInputChange}
-                        maxLength={200}
-                        rows={4}
-                    />
+              </div>
+            )}
+          </Droppable>
+      
+          {/* IN PROGRESS */}
+          <Droppable droppableId="In Progress">
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                <h1 className="text-center text-xl font-bold sm:text-2xl pb-3.5 text-[#e68226]">
+                  In Progress
+                </h1>
+                <div className="bg-[#e6b89c24] p-3 rounded-2xl">
+                  {task.filter((task) => task.category === "In Progress").map((filteredTask, index) => (
+                    <Draggable key={filteredTask._id} draggableId={filteredTask._id} index={index}>
+                      {(provided) => (
+                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                          <InProgress filteredTask={filteredTask} refetch={refetch} />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
                 </div>
-                <div className="mb-4">
-                    <label className="block mb-2 font-medium">Category</label>
-                    <Select
-                        value={form.category}
-                        className="w-full"
-                        onChange={handleCategoryChange}
-                        options={[
-                            { value: 'To-Do', label: 'To-Do' },
-                            { value: 'In Progress', label: 'In Progress' },
-                            { value: 'Done', label: 'Done' },
-                        ]}
-                    />
+              </div>
+            )}
+          </Droppable>
+      
+          {/* DONE */}
+          <Droppable droppableId="Done">
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                <h1 className="text-center text-xl font-bold sm:text-2xl pb-3.5 text-[#3b82f6]">
+                  Done
+                </h1>
+                <div className="bg-[#a2d1f55a] p-3 rounded-2xl">
+                  {task.filter((task) => task.category === "Done").map((filteredTask, index) => (
+                    <Draggable key={filteredTask._id} draggableId={filteredTask._id} index={index}>
+                      {(provided) => (
+                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                          <Done filteredTask={filteredTask} refetch={refetch} />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
                 </div>
-            </Modal>
-        </DndContext>
+              </div>
+            )}
+          </Droppable>
+        </div>
+      </DragDropContext>
+      
     );
 };
 
 export default Category;
-

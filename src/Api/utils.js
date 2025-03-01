@@ -38,7 +38,7 @@ export const handleDelete = (id) => {
                 label: 'Yes',
                 onClick: async () => {
                     try {
-                        const res = await axios.delete(`http://localhost:5000/todos/${id}`);
+                        const res = await axios.delete(`https://to-do-server-black.vercel.app/todos/${id}`);
                         if (res.data.deletedCount > 0) {
                             // refetch(); // Refetch data after deletion
                             message.success('Task deleted successfully!');
